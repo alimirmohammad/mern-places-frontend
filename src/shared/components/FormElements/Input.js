@@ -13,12 +13,12 @@ export default function Input({
   validators,
   onInput,
   defaultValue,
-  valid,
+  defaultValid,
 }) {
   const [{ value, isValid, isTouched }, dispatch] = useReducer(inputReducer, {
     value: defaultValue ?? '',
     isTouched: false,
-    isValid: valid ?? false,
+    isValid: defaultValid ?? false,
   });
 
   useEffect(() => {
