@@ -13,22 +13,43 @@ export default function PlaceItem({
   description,
   coordinates,
 }) {
-  const [showMap, setShowMap] = useState(false);
-  const openMap = () => setShowMap(true);
-  const closeMap = () => setShowMap(false);
+  const [modal, setModal] = useState('none');
+  const openMapModal = () => setModal('map');
+  const openDeleteModal = () => setModal('delete');
+  const closeModal = () => setModal('none');
+  const confirmDelete = () => {
+    console.log('DELETING...');
+    closeModal();
+  };
 
   return (
     <>
       <Modal
-        show={showMap}
-        onCancel={closeMap}
+        show={modal === 'map'}
+        onCancel={closeModal}
         header={address}
-        footer={<Button onClick={closeMap}>CLOSE</Button>}
+        footer={<Button onClick={closeModal}>CLOSE</Button>}
         contentClass='place-item__modal-content'
         footerClass='place-item__modal-actions'>
         <div className='map-container'>
           <Map center={coordinates} zoom={16} />
         </div>
+      </Modal>
+      <Modal
+        show={modal === 'delete'}
+        onCancel={closeModal}
+        header='Are you sure?'
+        footer={
+          <>
+            <Button onClick={closeModal}>CANCEL</Button>
+            <Button onClick={confirmDelete}>DELETE</Button>
+          </>
+        }
+        footerClass='place-item__modal-actions'>
+        <p>
+          Do you want to proceed and delete this place? Please note that it
+          can't be undone thereafter.
+        </p>
       </Modal>
       <li className='place-item'>
         <Card className='place-item__content'>
@@ -41,11 +62,13 @@ export default function PlaceItem({
             <p>{description}</p>
           </div>
           <div className='place-item__actions'>
-            <Button inverse onClick={openMap}>
+            <Button inverse onClick={openMapModal}>
               VIEW ON MAP
             </Button>
             <Button to={`/places/${id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button danger onClick={openDeleteModal}>
+              DELETE
+            </Button>
           </div>
         </Card>
       </li>
