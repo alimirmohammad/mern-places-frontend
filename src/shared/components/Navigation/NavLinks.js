@@ -5,7 +5,7 @@ import { AuthContext } from '../../context/auth-context';
 import './NavLinks.css';
 
 export default function NavLinks() {
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, logout, userId } = useContext(AuthContext);
   return (
     <ul className='nav-links'>
       <li>
@@ -16,7 +16,7 @@ export default function NavLinks() {
       {isLoggedIn && (
         <>
           <li>
-            <NavLink to='/u1/places'>MY PLACES</NavLink>
+            <NavLink to={`/${userId}/places`}>MY PLACES</NavLink>
           </li>
           <li>
             <NavLink to='/places/new'>ADD PLACE</NavLink>

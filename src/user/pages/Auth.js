@@ -12,12 +12,12 @@ import {
 import useForm from '../../shared/hooks/form-hook';
 import Button from '../../shared/components/FormElements/Button';
 import { AuthContext } from '../../shared/context/auth-context';
+import useHttpClient from '../../shared/hooks/http-hook';
 
 export default function Auth() {
   const { login } = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [{ inputs, isValid }, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -35,26 +35,36 @@ export default function Auth() {
   async function authenticate(event) {
     event.preventDefault();
     if (isLoginMode) {
+      try {
+        const data = await sendRequest(
+          'http://localhost:5000/api/users/login',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: inputs.email.value,
+              password: inputs.password.value,
+            }),
+          }
+        );
+        login(data.user.id);
+      } catch (error) {}
     } else {
       try {
-        setIsLoading(true);
-        const response = await fetch('http://localhost:5000/api/users/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: inputs.name.value,
-            email: inputs.email.value,
-            password: inputs.password.value,
-          }),
-        });
-        const data = await response.json();
-        if (!response.ok) throw data;
-        setIsLoading(false);
-        login();
-      } catch (error) {
-        setError(error.message);
-        setIsLoading(false);
-      }
+        const data = await sendRequest(
+          'http://localhost:5000/api/users/signup',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: inputs.name.value,
+              email: inputs.email.value,
+              password: inputs.password.value,
+            }),
+          }
+        );
+        login(data.user.id);
+      } catch (error) {}
     }
   }
 
@@ -68,10 +78,6 @@ export default function Auth() {
       );
     }
     setIsLoginMode(prev => !prev);
-  }
-
-  function clearError() {
-    setError('');
   }
 
   return (
@@ -107,8 +113,8 @@ export default function Auth() {
             id='password'
             type='password'
             label='Password'
-            validators={[VALIDATOR_MINLENGTH(5)]}
-            errorText='Please enter a valid password, at least 5 characters.'
+            validators={[VALIDATOR_MINLENGTH(6)]}
+            errorText='Please enter a valid password, at least 6 characters.'
             onInput={inputHandler}
           />
           <Button type='submit' disabled={!isValid}>

@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import useHttpClient from '../../shared/hooks/http-hook';
 import UsersList from '../components/UsersList';
 
-const USERS = [
-  {
-    id: 'u1',
-    name: 'Ali',
-    places: 3,
-    image:
-      'https://image.freepik.com/free-photo/young-handsome-man-listens-music-with-earphones_176420-15616.jpg',
-  },
-];
-
 export default function Users() {
-  return <UsersList items={USERS} />;
+  const [users, setUsers] = useState([]);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await sendRequest('http://localhost:5000/api/users');
+        setUsers(data.users);
+      } catch (error) {}
+    })();
+  }, [sendRequest]);
+
+  return (
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && (
+        <div className='center'>
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && users.length > 0 && <UsersList items={users} />}
+    </>
+  );
 }

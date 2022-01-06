@@ -5,6 +5,9 @@ import './PlaceItem.css';
 import Modal from '../../shared/components/UIElements/Modal';
 import Map from '../../shared/components/UIElements/Map';
 import { AuthContext } from '../../shared/context/auth-context';
+import useHttpClient from '../../shared/hooks/http-hook';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 export default function PlaceItem({
   id,
@@ -13,19 +16,28 @@ export default function PlaceItem({
   address,
   description,
   coordinates,
+  creatorId,
+  onDelete,
 }) {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, userId } = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [modal, setModal] = useState('none');
   const openMapModal = () => setModal('map');
   const openDeleteModal = () => setModal('delete');
   const closeModal = () => setModal('none');
-  const confirmDelete = () => {
-    console.log('DELETING...');
+  const confirmDelete = async () => {
     closeModal();
+    try {
+      await sendRequest(`http://localhost:5000/api/places/${id}`, {
+        method: 'DELETE',
+      });
+      onDelete(id);
+    } catch (error) {}
   };
 
   return (
     <>
+      <ErrorModal error={error} onClear={clearError} />
       <Modal
         show={modal === 'map'}
         onCancel={closeModal}
@@ -55,6 +67,7 @@ export default function PlaceItem({
       </Modal>
       <li className='place-item'>
         <Card className='place-item__content'>
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className='place-item__image'>
             <img src={image} alt={title} />
           </div>
@@ -67,7 +80,7 @@ export default function PlaceItem({
             <Button inverse onClick={openMapModal}>
               VIEW ON MAP
             </Button>
-            {isLoggedIn && (
+            {isLoggedIn && userId === creatorId && (
               <>
                 <Button to={`/places/${id}`}>EDIT</Button>
                 <Button danger onClick={openDeleteModal}>
