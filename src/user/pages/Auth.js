@@ -13,6 +13,7 @@ import useForm from '../../shared/hooks/form-hook';
 import Button from '../../shared/components/FormElements/Button';
 import { AuthContext } from '../../shared/context/auth-context';
 import useHttpClient from '../../shared/hooks/http-hook';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 export default function Auth() {
   const { login } = useContext(AuthContext);
@@ -70,10 +71,17 @@ export default function Auth() {
 
   function switchMode() {
     if (isLoginMode) {
-      setFormData({ ...inputs, name: { value: '', isValid: false } }, false);
+      setFormData(
+        {
+          ...inputs,
+          name: { value: '', isValid: false },
+          image: { value: null, isValid: false },
+        },
+        false
+      );
     } else {
       setFormData(
-        { ...inputs, name: undefined },
+        { ...inputs, name: undefined, image: undefined },
         inputs.email.isValid && inputs.password.isValid
       );
     }
@@ -89,15 +97,23 @@ export default function Auth() {
         <hr />
         <form onSubmit={authenticate}>
           {!isLoginMode && (
-            <Input
-              element='input'
-              id='name'
-              type='text'
-              label='Name'
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText='Please enter a name.'
-              onInput={inputHandler}
-            />
+            <>
+              <Input
+                element='input'
+                id='name'
+                type='text'
+                label='Name'
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText='Please enter a name.'
+                onInput={inputHandler}
+              />
+              <ImageUpload
+                id='image'
+                center
+                onInput={inputHandler}
+                errorText=''
+              />
+            </>
           )}
           <Input
             element='input'
