@@ -16,7 +16,7 @@ import './NewPlace.css';
 
 export default function NewPlace() {
   const history = useHistory();
-  const { userId } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [{ inputs, isValid }, inputHandler] = useForm(
     {
@@ -47,11 +47,11 @@ export default function NewPlace() {
       formData.append('title', inputs.title.value);
       formData.append('description', inputs.description.value);
       formData.append('address', inputs.address.value);
-      formData.append('creator', userId);
       formData.append('image', inputs.image.value);
       await sendRequest('http://localhost:5000/api/places', {
         method: 'POST',
         body: formData,
+        headers: { Authorization: `Bearer ${token}` },
       });
       history.push('/');
     } catch (error) {}

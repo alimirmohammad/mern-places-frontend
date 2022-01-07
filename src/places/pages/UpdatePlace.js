@@ -18,7 +18,7 @@ export default function UpdatePlace() {
   const { placeId } = useParams();
   const history = useHistory();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const [place, setPlace] = useState();
   const [{ inputs, isValid }, inputHandler, setFormData] = useForm(
     {
@@ -67,7 +67,10 @@ export default function UpdatePlace() {
           title: inputs.title.value,
           description: inputs.description.value,
         }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       });
       history.push(`/${userId}/places`);
     } catch (error) {}

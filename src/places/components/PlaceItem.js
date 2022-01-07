@@ -19,7 +19,7 @@ export default function PlaceItem({
   creatorId,
   onDelete,
 }) {
-  const { isLoggedIn, userId } = useContext(AuthContext);
+  const { isLoggedIn, userId, token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [modal, setModal] = useState('none');
   const openMapModal = () => setModal('map');
@@ -30,6 +30,7 @@ export default function PlaceItem({
     try {
       await sendRequest(`http://localhost:5000/api/places/${id}`, {
         method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
       });
       onDelete(id);
     } catch (error) {}

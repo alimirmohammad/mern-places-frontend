@@ -48,7 +48,7 @@ export default function Auth() {
             }),
           }
         );
-        login(data.user.id);
+        login(data.userId, data.token);
       } catch (error) {}
     } else {
       try {
@@ -64,7 +64,7 @@ export default function Auth() {
             body: formData,
           }
         );
-        login(data.user.id);
+        login(data.userId, data.token);
       } catch (error) {}
     }
   }
