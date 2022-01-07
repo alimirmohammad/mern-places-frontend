@@ -38,7 +38,7 @@ export default function Auth() {
     if (isLoginMode) {
       try {
         const data = await sendRequest(
-          'http://localhost:5000/api/users/login',
+          `${process.env.REACT_APP_BACKEND_DOMAIN}/api/users/login`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -58,7 +58,7 @@ export default function Auth() {
         formData.append('password', inputs.password.value);
         formData.append('image', inputs.image.value);
         const data = await sendRequest(
-          'http://localhost:5000/api/users/signup',
+          `${process.env.REACT_APP_BACKEND_DOMAIN}/api/users/signup`,
           {
             method: 'POST',
             body: formData,

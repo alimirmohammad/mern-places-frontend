@@ -28,10 +28,13 @@ export default function PlaceItem({
   const confirmDelete = async () => {
     closeModal();
     try {
-      await sendRequest(`http://localhost:5000/api/places/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_DOMAIN}/api/places/${id}`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       onDelete(id);
     } catch (error) {}
   };
@@ -70,7 +73,10 @@ export default function PlaceItem({
         <Card className='place-item__content'>
           {isLoading && <LoadingSpinner asOverlay />}
           <div className='place-item__image'>
-            <img src={`http://localhost:5000/${image}`} alt={title} />
+            <img
+              src={`${process.env.REACT_APP_BACKEND_DOMAIN}/${image}`}
+              alt={title}
+            />
           </div>
           <div className='place-item__info'>
             <h2>{title}</h2>

@@ -38,7 +38,7 @@ export default function UpdatePlace() {
     (async () => {
       try {
         const data = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          `${process.env.REACT_APP_BACKEND_DOMAIN}/api/places/${placeId}`
         );
         setPlace(data.place);
         setFormData(
@@ -61,17 +61,20 @@ export default function UpdatePlace() {
   async function updatePlace(event) {
     event.preventDefault();
     try {
-      await sendRequest(`http://localhost:5000/api/places/${placeId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          title: inputs.title.value,
-          description: inputs.description.value,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_DOMAIN}/api/places/${placeId}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            title: inputs.title.value,
+            description: inputs.description.value,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       history.push(`/${userId}/places`);
     } catch (error) {}
   }

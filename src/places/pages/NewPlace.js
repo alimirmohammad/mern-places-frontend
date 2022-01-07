@@ -48,7 +48,7 @@ export default function NewPlace() {
       formData.append('description', inputs.description.value);
       formData.append('address', inputs.address.value);
       formData.append('image', inputs.image.value);
-      await sendRequest('http://localhost:5000/api/places', {
+      await sendRequest(`${process.env.REACT_APP_BACKEND_DOMAIN}/api/places`, {
         method: 'POST',
         body: formData,
         headers: { Authorization: `Bearer ${token}` },
