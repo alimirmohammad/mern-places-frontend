@@ -52,16 +52,16 @@ export default function Auth() {
       } catch (error) {}
     } else {
       try {
+        const formData = new FormData();
+        formData.append('name', inputs.name.value);
+        formData.append('email', inputs.email.value);
+        formData.append('password', inputs.password.value);
+        formData.append('image', inputs.image.value);
         const data = await sendRequest(
           'http://localhost:5000/api/users/signup',
           {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: inputs.name.value,
-              email: inputs.email.value,
-              password: inputs.password.value,
-            }),
+            body: formData,
           }
         );
         login(data.user.id);
@@ -111,7 +111,7 @@ export default function Auth() {
                 id='image'
                 center
                 onInput={inputHandler}
-                errorText=''
+                errorText='Please provide an image.'
               />
             </>
           )}

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '../../shared/components/FormElements/Button';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import Input from '../../shared/components/FormElements/Input';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
@@ -31,6 +32,10 @@ export default function NewPlace() {
         value: '',
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -38,15 +43,15 @@ export default function NewPlace() {
   async function addPlace(event) {
     event.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append('title', inputs.title.value);
+      formData.append('description', inputs.description.value);
+      formData.append('address', inputs.address.value);
+      formData.append('creator', userId);
+      formData.append('image', inputs.image.value);
       await sendRequest('http://localhost:5000/api/places', {
         method: 'POST',
-        body: JSON.stringify({
-          title: inputs.title.value,
-          description: inputs.description.value,
-          address: inputs.address.value,
-          creator: userId,
-        }),
-        headers: { 'Content-Type': 'application/json' },
+        body: formData,
       });
       history.push('/');
     } catch (error) {}
@@ -82,6 +87,11 @@ export default function NewPlace() {
           validators={[VALIDATOR_REQUIRE()]}
           errorText='Please enter a valid address.'
           onInput={inputHandler}
+        />
+        <ImageUpload
+          id='image'
+          onInput={inputHandler}
+          errorText='Please provide an image.'
         />
         <Button type='submit' disabled={!isValid}>
           ADD PLACE
